@@ -1,8 +1,7 @@
 {
-  "name": "paper-dashboard-react",
+  "name": "lamusic-frontend",
   "version": "1.1.0",
   "private": true,
-  "homepage": "https://demos.creative-tim.com/paper-dashboard-react/#/dashboard",
   "dependencies": {
     "axios": "^0.19.2",
     "bootstrap": "4.3.1",
