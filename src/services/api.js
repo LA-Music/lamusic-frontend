@@ -3,6 +3,8 @@ import { getToken } from "./auth";
 
 const api = axios.create({
     baseURL: 'https://lamusic-platform-backend.herokuapp.com'
+    // baseURL: 'http://localhost:8080'
+
 })
 
 api.interceptors.request.use(async config => {

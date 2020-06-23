@@ -6,20 +6,18 @@ import DemoNavbar from "components/Navbars/DemoNavbar.jsx";
 import Sidebar from "components/Sidebar/Sidebar.jsx";
 import { isAuthenticated } from "../services/auth";
 
-import routes from "routes.js";
+import {routesUser} from "routes.js";
 
 var ps;
 
-class Dashboard extends React.Component {
+class DashboardUser extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       backgroundColor: "black",
       activeColor: "info"
     };
-    console.log(routes)
-    // const menu_routes = routes
-    // menu_routes.splice(-1)
+    console.log(routesUser)
     this.mainPanel = React.createRef();
   }
   componentDidMount() {
@@ -66,14 +64,14 @@ class Dashboard extends React.Component {
         <Sidebar
           {...this.props}
 
-          routes={routes}
+          routes={routesUser}
           bgColor={this.state.backgroundColor}
           activeColor={this.state.activeColor}
         />
         <div className="main-panel" ref={this.mainPanel}>
           <DemoNavbar {...this.props} />
           <Switch>
-            {routes.map((prop, key) => {
+            {routesUser.map((prop, key) => {
               return (
                 <this.PrivateRoute
                   path={prop.layout + prop.path}
@@ -89,4 +87,4 @@ class Dashboard extends React.Component {
   }
 }
 
-export default Dashboard;
+export default DashboardUser;

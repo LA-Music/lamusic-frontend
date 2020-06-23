@@ -5,6 +5,10 @@ import Musica from "views/admin/Musica"
 import Contato from "views/admin/Contato"
 import UserPage from "views/User.jsx";
 
+import CreditoForm from "views/user/Credito.jsx"
+import ContatoForm from "views/user/Contato.jsx"
+import MusicaForm from "views/user/Musica.jsx"
+import MarcaForm from "views/user/Marca.jsx"
 
 var routes = [
   {
@@ -50,4 +54,37 @@ var routes = [
     layout: "/admin"
   }
 ];
+
+var routes_user = [
+  {
+    path: "/credito-retido",
+    name: "Credito Retido",
+    icon: "nc-icon nc-chart-bar-32",
+    component: CreditoForm,
+    layout: "/user"
+  },
+  {
+    path: "/marca",
+    name: "Marcas",
+    icon: "nc-icon nc-chart-bar-32",
+    component: MarcaForm,
+    layout: "/user"
+  },
+  {
+    path: "/musica",
+    name: "Musicas",
+    icon: "nc-icon nc-chart-bar-32",
+    component: MusicaForm,
+    layout: "/user"
+  },
+  {
+    path: "/contato-user",
+    name: "Contato",
+    icon: "nc-icon nc-chart-bar-32",
+    component: ContatoForm,
+    layout: "/user"
+  }
+]
 export default routes;
+export const routesUser = routes_user;
+

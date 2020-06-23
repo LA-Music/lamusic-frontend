@@ -1,0 +1,13 @@
+.detalhes{
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+
+}
+.detalhes:hover{
+  color: red;
+  font-weight: bold;
+}
+.modalObras{
+  list-style: none;
+}

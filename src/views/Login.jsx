@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import api from '../services/api'
 import { login } from "../services/auth";
 import '../assets/css/Login.css'
@@ -8,7 +8,6 @@ import {
     Card,
     CardHeader,
     CardBody,
-    CardFooter,
     CardTitle,
     FormGroup,
     Form,
@@ -18,24 +17,27 @@ import {
   } from "reactstrap";
 
 class Login extends React.Component {
-    
+
     state = {
-        username: "",
-        password: "",
+        email: "",
+        senha: "",
         error: ""
       };
-      
+
       handleSignIn = async e => {
           e.preventDefault();
-          const { username, password } = this.state;
-          if (!username || !password) {
+          const { email, senha } = this.state;
+          if (!email || !senha) {
           this.setState({ error: "Preencha e-mail e senha para continuar!" });
           } else {
           try {
-              const response = await api.post("/autentificar", { username, password });
-              login(response.data.token);
-            //   console.log(response.data.token)
-              this.props.history.push("/admin/dashboard");
+              const response = await api.post("/autentificar", { email, senha });
+              login(response.data.token, response.data.nome);
+              if (response.data.papel === 'admin') {
+                this.props.history.push("/admin/dashboard");
+              }else {
+                this.props.history.push("/user/credito-retido");
+              }
           } catch (err) {
               this.setState({
               error:
@@ -72,11 +74,11 @@ class Login extends React.Component {
                         <Row>
                           <Col>
                             <FormGroup>
-                              <label>Username</label>
+                              <label>Email</label>
                               <Input
                                 placeholder="Nome de Usuário"
-                                type="text"
-                                onChange={e => this.setState({ username: e.target.value })}
+                                type="email"
+                                onChange={e => this.setState({email: e.target.value })}
                               />
                             </FormGroup>
                           </Col>
@@ -87,13 +89,13 @@ class Login extends React.Component {
                               <label htmlFor="exampleInputEmail1">
                                 Senha
                               </label>
-                              <Input 
+                              <Input
                                 type="password"
-                                onChange={e => this.setState({password: e.target.value})} 
+                                onChange={e => this.setState({senha: e.target.value})}
                                 />
                             </FormGroup>
                           </Col>
-                        </Row>                        
+                        </Row>
                         <Row>
                           <div className="update ml-auto mr-auto">
                             <Button

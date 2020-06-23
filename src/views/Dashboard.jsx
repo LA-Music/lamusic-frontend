@@ -1,24 +1,10 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
+import api from '../services/api'
+
 // react plugin used to create charts
 import { Line, Pie } from "react-chartjs-2";
+import '../assets/css/Dashboard.css'
+
 // reactstrap components
 import {
   Card,
@@ -27,7 +13,8 @@ import {
   CardFooter,
   CardTitle,
   Row,
-  Col
+  Table,Button,
+  Col,Modal, ModalHeader, ModalBody, ModalFooter
 } from "reactstrap";
 // core components
 import {
@@ -37,10 +24,62 @@ import {
 } from "variables/charts.jsx";
 
 class Dashboard extends React.Component {
+  constructor(props) {
+      super(props);
+      this.state = {
+        processos:[],
+        obras:[],
+        modal: false,
+        modalTitle:"Obras Recuperadas"
+      };
+      this.toggle = this.toggle.bind(this);
+    }
+
+  componentDidMount(){
+      api.get('/processo-list/1').then(res=>{
+          this.setState({processos:res.data.docs})
+      })
+  }
+  toggle() {
+    this.setState({
+      modal: !this.state.modal
+    });
+  }
+  modalContent(obras){
+    this.setState({
+      obras: obras
+    });
+
+    this.toggle()
+  }
   render() {
     return (
       <>
         <div className="content">
+        <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+         <ModalHeader toggle={this.toggle}>{this.state.modalTitle}</ModalHeader>
+         <ModalBody>
+         {
+         this.state.obras.map((obra,index)=>
+            <div key={obra._id}>
+            <h3>cód Ecad {obra.codEcad}</h3>
+             <ul className="modalObras">
+                 <li><b>Título: </b>{obra.titulo}</li>
+                 <li><b>Interprete: </b>{obra.interprete}</li>
+                 <li><b>Competencia: </b>{obra.competencia}</li>
+                 <li><b>Faixa: </b>{obra.faixa}</li>
+                 <li><b>Motivo: </b>{obra.motivo}</li>
+                 <li><b>Execucao: </b>{obra.execucao}</li>
+             </ul>
+             </div>
+             )
+         }
+         </ModalBody>
+         <ModalFooter>
+           {/* <Button color='primary' onClick={this.toggle}>Do Something</Button>{' '} */}
+           <Button color='primary' onClick={this.toggle}>Ok</Button>
+         </ModalFooter>
+       </Modal>
           <Row>
             <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
@@ -147,83 +186,42 @@ class Dashboard extends React.Component {
               </Card>
             </Col>
           </Row>
+
           <Row>
-            <Col md="12">
+              <Col md="12">
               <Card>
-                <CardHeader>
-                  <CardTitle tag="h5">Users Behavior</CardTitle>
-                  <p className="card-category">24 Hours performance</p>
-                </CardHeader>
-                <CardBody>
-                  <Line
-                    data={dashboard24HoursPerformanceChart.data}
-                    options={dashboard24HoursPerformanceChart.options}
-                    width={400}
-                    height={100}
-                  />
-                </CardBody>
-                <CardFooter>
-                  <hr />
-                  <div className="stats">
-                    <i className="fa fa-history" /> Updated 3 minutes ago
-                  </div>
-                </CardFooter>
+              <CardHeader>
+                  <CardTitle tag="h4">Processos</CardTitle>
+              </CardHeader>
+              <CardBody>
+              <Table responsive>
+                  <thead>
+                      <tr>
+                      {/* <th>#</th> */}
+                      <th>Tipo</th>
+                      <th>Nome</th>
+                      <th>Email</th>
+                      <th>Status</th>
+                      <th style={{textAlign: "center"}}>Detalhes</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {
+                      this.state.processos.map((processo,index)=>
+                          <tr key={processo._id}>
+                              <td>{processo.tipo}</td>
+                              <td>{processo.nome}</td>
+                              <td>{processo.email}</td>
+                              <td>{processo.status}</td>
+                              <td className="detalhes" onClick={this.modalContent.bind(this,processo.obras)}><i className="nc-icon nc-simple-add"></i></td>
+                          </tr>
+                          )
+                      }
+                  </tbody>
+              </Table>
+              </CardBody>
               </Card>
-            </Col>
-          </Row>
-          <Row>
-            <Col md="4">
-              <Card>
-                <CardHeader>
-                  <CardTitle tag="h5">Email Statistics</CardTitle>
-                  <p className="card-category">Last Campaign Performance</p>
-                </CardHeader>
-                <CardBody>
-                  <Pie
-                    data={dashboardEmailStatisticsChart.data}
-                    options={dashboardEmailStatisticsChart.options}
-                  />
-                </CardBody>
-                <CardFooter>
-                  <div className="legend">
-                    <i className="fa fa-circle text-primary" /> Opened{" "}
-                    <i className="fa fa-circle text-warning" /> Read{" "}
-                    <i className="fa fa-circle text-danger" /> Deleted{" "}
-                    <i className="fa fa-circle text-gray" /> Unopened
-                  </div>
-                  <hr />
-                  <div className="stats">
-                    <i className="fa fa-calendar" /> Number of emails sent
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
-            <Col md="8">
-              <Card className="card-chart">
-                <CardHeader>
-                  <CardTitle tag="h5">NASDAQ: AAPL</CardTitle>
-                  <p className="card-category">Line Chart with Points</p>
-                </CardHeader>
-                <CardBody>
-                  <Line
-                    data={dashboardNASDAQChart.data}
-                    options={dashboardNASDAQChart.options}
-                    width={400}
-                    height={100}
-                  />
-                </CardBody>
-                <CardFooter>
-                  <div className="chart-legend">
-                    <i className="fa fa-circle text-info" /> Tesla Model S{" "}
-                    <i className="fa fa-circle text-warning" /> BMW 5 Series
-                  </div>
-                  <hr />
-                  <div className="card-stats">
-                    <i className="fa fa-check" /> Data information certified
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
+              </Col>
           </Row>
         </div>
       </>
