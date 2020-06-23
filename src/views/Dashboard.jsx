@@ -70,6 +70,7 @@ class Dashboard extends React.Component {
                  <li><b>Faixa: </b>{obra.faixa}</li>
                  <li><b>Motivo: </b>{obra.motivo}</li>
                  <li><b>Execucao: </b>{obra.execucao}</li>
+                 <li><b>Autores: </b>{obra.autores}</li>
              </ul>
              </div>
              )
