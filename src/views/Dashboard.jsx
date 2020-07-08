@@ -60,7 +60,7 @@ class Dashboard extends React.Component {
          <ModalHeader toggle={this.toggle}>{this.state.modalTitle}</ModalHeader>
          <ModalBody>
          {
-         this.state.obras.map((obra,index)=>
+         this.state.obras.map((obra,index) =>
             <div key={obra._id}>
             <h3>cód Ecad {obra.codEcad}</h3>
              <ul className="modalObras">
@@ -81,7 +81,7 @@ class Dashboard extends React.Component {
            <Button color='primary' onClick={this.toggle}>Ok</Button>
          </ModalFooter>
        </Modal>
-          <Row>
+          {/* <Row>
             <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
                 <CardBody>
@@ -186,7 +186,7 @@ class Dashboard extends React.Component {
                 </CardFooter>
               </Card>
             </Col>
-          </Row>
+          </Row> */}
 
           <Row>
               <Col md="12">
@@ -194,8 +194,8 @@ class Dashboard extends React.Component {
               <CardHeader>
                   <CardTitle tag="h4">Processos</CardTitle>
               </CardHeader>
-              <CardBody>
-              <Table responsive>
+              <CardBody className="processosTable">
+              <Table>
                   <thead>
                       <tr>
                       {/* <th>#</th> */}
@@ -203,17 +203,19 @@ class Dashboard extends React.Component {
                       <th>Nome</th>
                       <th>Email</th>
                       <th>Status</th>
+                      <th>Data</th>
                       <th style={{textAlign: "center"}}>Detalhes</th>
                       </tr>
                   </thead>
                   <tbody>
                       {
-                      this.state.processos.map((processo,index)=>
+                      this.state.processos.map((processo,index) =>
                           <tr key={processo._id}>
                               <td>{processo.tipo}</td>
                               <td>{processo.nome}</td>
                               <td>{processo.email}</td>
                               <td>{processo.status}</td>
+                              <td>{processo.createdAt}</td>
                               <td className="detalhes" onClick={this.modalContent.bind(this,processo.obras)}><i className="nc-icon nc-simple-add"></i></td>
                           </tr>
                           )
