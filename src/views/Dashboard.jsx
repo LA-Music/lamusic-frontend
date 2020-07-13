@@ -204,7 +204,8 @@ class Dashboard extends React.Component {
                       <th>Email</th>
                       <th>Status</th>
                       <th>Data</th>
-                      <th style={{textAlign: "center"}}>Detalhes</th>
+                      <th style={{textAlign: "center"}}>Obras</th>
+                      <th style={{textAlign: "center"}}>Fonogramas</th>
                       </tr>
                   </thead>
                   <tbody>
@@ -217,6 +218,8 @@ class Dashboard extends React.Component {
                               <td>{processo.status}</td>
                               <td>{processo.createdAt}</td>
                               <td className="detalhes" onClick={this.modalContent.bind(this,processo.obras)}><i className="nc-icon nc-simple-add"></i></td>
+                              <td className="detalhes" ><i className="nc-icon nc-simple-add"></i></td>
+
                           </tr>
                           )
                       }
