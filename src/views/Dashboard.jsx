@@ -14,7 +14,7 @@ import {
   CardTitle,
   Row,
   Table,Button,
-  Col,Modal, ModalHeader, ModalBody, ModalFooter
+  Col,Modal, ModalHeader, ModalBody, ModalFooter, Input
 } from "reactstrap";
 // core components
 import {
@@ -29,20 +29,30 @@ class Dashboard extends React.Component {
       this.state = {
         processos:[],
         obras:[],
+        fonogramas:[],
         modal: false,
-        modalTitle:"Obras Recuperadas"
+        modalFonograma: false,
+        modalTitle:"Obras Recuperadas",
+        modalFonogramaTitle:"Fonogramas Recuperados"
       };
       this.toggle = this.toggle.bind(this);
+      this.toggleFonograma = this.toggleFonograma.bind(this);
     }
 
   componentDidMount(){
       api.get('/processo-list/1').then(res=>{
           this.setState({processos:res.data.docs})
+          console.log(res.data.docs)
       })
   }
   toggle() {
     this.setState({
       modal: !this.state.modal
+    });
+  }
+  toggleFonograma() {
+    this.setState({
+      modalFonograma: !this.state.modalFonograma
     });
   }
   modalContent(obras){
@@ -51,6 +61,13 @@ class Dashboard extends React.Component {
     });
 
     this.toggle()
+  }
+  modalContentFonogramas(fonogramas){
+    this.setState({
+      fonogramas: fonogramas
+    });
+
+    this.toggleFonograma()
   }
   render() {
     return (
@@ -79,6 +96,31 @@ class Dashboard extends React.Component {
          <ModalFooter>
            {/* <Button color='primary' onClick={this.toggle}>Do Something</Button>{' '} */}
            <Button color='primary' onClick={this.toggle}>Ok</Button>
+         </ModalFooter>
+       </Modal>
+
+       <Modal isOpen={this.state.modalFonograma} toggle={this.toggleFonograma} className={this.props.className}>
+         <ModalHeader toggle={this.toggle}>{this.state.modalFonogramaTitle}</ModalHeader>
+         <ModalBody>
+         {
+         this.state.fonogramas.map((fonograma,index) =>
+            <div key={fonograma._id}>
+            <h3>cód Ecad {fonograma.codEcad}</h3>
+             <ul className="modalObras">
+                 <li><b>Título: </b>{fonograma.titulo}</li>
+                 <li><b>Interprete: </b>{fonograma.interprete}</li>
+                 <li><b>Competencia: </b>{fonograma.competencia}</li>
+                 <li><b>Faixa: </b>{fonograma.faixa}</li>
+                 <li><b>Motivo: </b>{fonograma.motivo}</li>
+                 <li><b>Execucao: </b>{fonograma.execucao}</li>
+                 <li><b>Autores: </b>{fonograma.autores}</li>
+             </ul>
+             </div>
+             )
+         }
+         </ModalBody>
+         <ModalFooter>
+           <Button color='primary' onClick={this.toggleFonograma}>Ok</Button>
          </ModalFooter>
        </Modal>
           {/* <Row>
@@ -198,12 +240,13 @@ class Dashboard extends React.Component {
               <Table>
                   <thead>
                       <tr>
-                      {/* <th>#</th> */}
-                      <th>Tipo</th>
+                      <th>#</th>
+                      <th>Data</th>
+                      {/*<th>Tipo</th>*/}
                       <th>Nome</th>
                       <th>Email</th>
                       <th>Status</th>
-                      <th>Data</th>
+                      <th>Status Fono</th>
                       <th style={{textAlign: "center"}}>Obras</th>
                       <th style={{textAlign: "center"}}>Fonogramas</th>
                       </tr>
@@ -212,13 +255,15 @@ class Dashboard extends React.Component {
                       {
                       this.state.processos.map((processo,index) =>
                           <tr key={processo._id}>
-                              <td>{processo.tipo}</td>
+                              <td><Input type="checkbox" style={{position:"inherit",marginLeft:"0px"}}/>{' '}</td>
+                              {/*<td>{processo.tipo}</td>*/}
+                              <td>{processo.createdAt}</td>
                               <td>{processo.nome}</td>
                               <td>{processo.email}</td>
                               <td>{processo.status}</td>
-                              <td>{processo.createdAt}</td>
+                              <td>{processo.status_fonograma}</td>
                               <td className="detalhes" onClick={this.modalContent.bind(this,processo.obras)}><i className="nc-icon nc-simple-add"></i></td>
-                              <td className="detalhes" ><i className="nc-icon nc-simple-add"></i></td>
+                              <td className="detalhes" onClick={this.modalContentFonogramas.bind(this,processo.fonogramas)}><i className="nc-icon nc-simple-add"></i></td>
 
                           </tr>
                           )
