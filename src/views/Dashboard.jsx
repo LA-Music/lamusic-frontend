@@ -37,7 +37,7 @@ class Dashboard extends React.Component {
 
   componentDidMount(){
       api.get('/processo-list/1').then(res=>{
-          this.setState({processos:res.data.docs})
+        this.setState({processos:res.data.docs})
       })
   }
   toggle() {

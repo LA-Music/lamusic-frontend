@@ -15,7 +15,7 @@ import {
 
 const Login = (props) => {
     const [ state, setState ] = useState({ email: '', senha: '', error: '', typeForm: 'Login' }) 
-    const [ typeForm ] = useState( { Login: {inputs:[ { label: 'Endereço de e-mail:', type: 'email', name: 'email', placeholder: 'luiz@lamusic.com.br' },
+    const [ typeForm ] = useState( { Login: {inputs:[ { label: 'Endereço de e-mail:', type: 'text', name: 'email', placeholder: 'luiz@lamusic.com.br' },
                                                       { label: 'Senha:', type: 'password', name: 'senha', placeholder: '*******' }]},
                                       Reset: {inputs:[{label: 'Seu e-mail:', type: 'email', name: 'email', placeholder: 'luiz@lamusic.com.br'}]},
                                       Register: {inputs:[{ label: 'Endereço de e-mail:', type: 'email', name: 'email', placeholder: 'luiz@lamusic.com.br'},
@@ -27,7 +27,8 @@ const Login = (props) => {
         e.preventDefault();
         const { email, senha } = state;
         if (!email || !senha) {
-          setState({ error: "Preencha e-mail e senha para continuar!" });
+          setState({...state, error: "Preencha e-mail e senha para continuar!" });
+          return false
         } else {
           try {
               const response = await api.post("/autentificar", { email, senha });
@@ -37,8 +38,8 @@ const Login = (props) => {
               }else {
                 props.history.push("/user/credito-retido");
               }
-          } catch (err) {
-              setState({
+            } catch (err) {
+              setState({...state,
               error:
                   "Houve um problema com o login, verifique suas credenciais. T.T"
               });
@@ -63,7 +64,7 @@ const Login = (props) => {
                           <FormGroup>
                             <Label>{e.label}</Label>
                             <InpText
-                              autoComplete="email"
+                              autoComplete="emails"
                               placeholder={e.placeholder}
                               type={e.type}
                               name={e.name}
