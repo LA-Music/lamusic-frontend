@@ -11,6 +11,7 @@ import {
 import api from '../../services/api'
 
 import { withRouter } from "react-router-dom";
+import '../../assets/css/Credito.css'
 
 class listCredito extends Component{
     state = {
@@ -32,8 +33,8 @@ class listCredito extends Component{
                 <CardHeader>
                     <CardTitle tag="h4">Recuperação de Crédito Retido</CardTitle>
                 </CardHeader>
-                <CardBody>
-                <Table responsive>
+                <CardBody className="responsiveTable">
+                <Table >
                     <thead>
                         <tr>
                         {/* <th>#</th> */}
@@ -43,7 +44,7 @@ class listCredito extends Component{
                         <th>Telefone</th>
                         <th>Nome Artístico</th>
                         <th>Associação</th>
-                        <th>Status</th>
+                        <th>Data</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -57,7 +58,7 @@ class listCredito extends Component{
                                 <td>{credito.telefone}</td>
                                 <td>{credito.nome_artistico}</td>
                                 <td>{credito.associacao}</td>
-                                <td>{credito.status}</td>
+                                <td>{credito.createdAt}</td>
                             </tr>
                             )
                         }

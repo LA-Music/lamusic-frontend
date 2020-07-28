@@ -11,3 +11,15 @@
 .modalObras{
   list-style: none;
 }
+.responsiveTable{
+  height: 70vh;
+  overflow: scroll;
+}
+body{
+  overflow:auto;
+}
+
+.processosTable{
+  height: 65vh;
+  overflow: auto;
+}

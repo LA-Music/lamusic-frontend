@@ -14,7 +14,7 @@ import {
   CardTitle,
   Row,
   Table,Button,
-  Col,Modal, ModalHeader, ModalBody, ModalFooter
+  Col,Modal, ModalHeader, ModalBody, ModalFooter, Input
 } from "reactstrap";
 // core components
 import {
@@ -29,20 +29,34 @@ class Dashboard extends React.Component {
       this.state = {
         processos:[],
         obras:[],
+        fonogramas:[],
         modal: false,
-        modalTitle:"Obras Recuperadas"
+        modalFonograma: false,
+        modalTitle:"Obras Recuperadas",
+        modalFonogramaTitle:"Fonogramas Recuperados"
       };
       this.toggle = this.toggle.bind(this);
+      this.toggleFonograma = this.toggleFonograma.bind(this);
     }
 
   componentDidMount(){
       api.get('/processo-list/1').then(res=>{
+<<<<<<< HEAD
         this.setState({processos:res.data.docs})
+=======
+          this.setState({processos:res.data.docs, processos_total:res.data.totalDocs})
+          console.log(res.data.totalDocs)
+>>>>>>> d29619ef34eb67b51ef1bd2f741d1fee40ea5308
       })
   }
   toggle() {
     this.setState({
       modal: !this.state.modal
+    });
+  }
+  toggleFonograma() {
+    this.setState({
+      modalFonograma: !this.state.modalFonograma
     });
   }
   modalContent(obras){
@@ -52,6 +66,13 @@ class Dashboard extends React.Component {
 
     this.toggle()
   }
+  modalContentFonogramas(fonogramas){
+    this.setState({
+      fonogramas: fonogramas
+    });
+
+    this.toggleFonograma()
+  }
   render() {
     return (
       <>
@@ -60,7 +81,7 @@ class Dashboard extends React.Component {
          <ModalHeader toggle={this.toggle}>{this.state.modalTitle}</ModalHeader>
          <ModalBody>
          {
-         this.state.obras.map((obra,index)=>
+         this.state.obras.map((obra,index) =>
             <div key={obra._id}>
             <h3>cód Ecad {obra.codEcad}</h3>
              <ul className="modalObras">
@@ -81,6 +102,31 @@ class Dashboard extends React.Component {
            <Button color='primary' onClick={this.toggle}>Ok</Button>
          </ModalFooter>
        </Modal>
+
+       <Modal isOpen={this.state.modalFonograma} toggle={this.toggleFonograma} className={this.props.className}>
+         <ModalHeader toggle={this.toggle}>{this.state.modalFonogramaTitle}</ModalHeader>
+         <ModalBody>
+         {
+         this.state.fonogramas.map((fonograma,index) =>
+            <div key={fonograma._id}>
+            <h3>cód Ecad {fonograma.codEcad}</h3>
+             <ul className="modalObras">
+                 <li><b>Título: </b>{fonograma.titulo}</li>
+                 <li><b>Interprete: </b>{fonograma.interprete}</li>
+                 <li><b>Competencia: </b>{fonograma.competencia}</li>
+                 <li><b>Faixa: </b>{fonograma.faixa}</li>
+                 <li><b>Motivo: </b>{fonograma.motivo}</li>
+                 <li><b>Execucao: </b>{fonograma.execucao}</li>
+                 <li><b>Autores: </b>{fonograma.autores}</li>
+             </ul>
+             </div>
+             )
+         }
+         </ModalBody>
+         <ModalFooter>
+           <Button color='primary' onClick={this.toggleFonograma}>Ok</Button>
+         </ModalFooter>
+       </Modal>
           <Row>
             <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
@@ -93,8 +139,8 @@ class Dashboard extends React.Component {
                     </Col>
                     <Col md="8" xs="7">
                       <div className="numbers">
-                        <p className="card-category">Capacity</p>
-                        <CardTitle tag="p">150GB</CardTitle>
+                        <p className="card-category">Processos</p>
+                        <CardTitle tag="p">{this.state.processos_total}</CardTitle>
                         <p />
                       </div>
                     </Col>
@@ -108,7 +154,7 @@ class Dashboard extends React.Component {
                 </CardFooter>
               </Card>
             </Col>
-            <Col lg="3" md="6" sm="6">
+            {/* <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
                 <CardBody>
                   <Row>
@@ -185,7 +231,7 @@ class Dashboard extends React.Component {
                   </div>
                 </CardFooter>
               </Card>
-            </Col>
+            </Col> */}
           </Row>
 
           <Row>
@@ -194,27 +240,35 @@ class Dashboard extends React.Component {
               <CardHeader>
                   <CardTitle tag="h4">Processos</CardTitle>
               </CardHeader>
-              <CardBody>
-              <Table responsive>
+              <CardBody className="processosTable">
+              <Table>
                   <thead>
                       <tr>
-                      {/* <th>#</th> */}
-                      <th>Tipo</th>
+                      <th>#</th>
+                      <th>Data</th>
+                      {/*<th>Tipo</th>*/}
                       <th>Nome</th>
                       <th>Email</th>
                       <th>Status</th>
-                      <th style={{textAlign: "center"}}>Detalhes</th>
+                      <th>Status Fono</th>
+                      <th style={{textAlign: "center"}}>Obras</th>
+                      <th style={{textAlign: "center"}}>Fonogramas</th>
                       </tr>
                   </thead>
                   <tbody>
                       {
-                      this.state.processos.map((processo,index)=>
+                      this.state.processos.map((processo,index) =>
                           <tr key={processo._id}>
-                              <td>{processo.tipo}</td>
+                              <td><Input type="checkbox" style={{position:"inherit",marginLeft:"0px"}}/>{' '}</td>
+                              {/*<td>{processo.tipo}</td>*/}
+                              <td>{processo.createdAt}</td>
                               <td>{processo.nome}</td>
                               <td>{processo.email}</td>
                               <td>{processo.status}</td>
+                              <td>{processo.status_fonograma}</td>
                               <td className="detalhes" onClick={this.modalContent.bind(this,processo.obras)}><i className="nc-icon nc-simple-add"></i></td>
+                              <td className="detalhes" onClick={this.modalContentFonogramas.bind(this,processo.fonogramas)}><i className="nc-icon nc-simple-add"></i></td>
+
                           </tr>
                           )
                       }
