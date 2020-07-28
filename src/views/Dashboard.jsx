@@ -41,8 +41,8 @@ class Dashboard extends React.Component {
 
   componentDidMount(){
       api.get('/processo-list/1').then(res=>{
-          this.setState({processos:res.data.docs})
-          console.log(res.data.docs)
+          this.setState({processos:res.data.docs, processos_total:res.data.totalDocs})
+          console.log(res.data.totalDocs)
       })
   }
   toggle() {
@@ -123,7 +123,7 @@ class Dashboard extends React.Component {
            <Button color='primary' onClick={this.toggleFonograma}>Ok</Button>
          </ModalFooter>
        </Modal>
-          {/* <Row>
+          <Row>
             <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
                 <CardBody>
@@ -135,8 +135,8 @@ class Dashboard extends React.Component {
                     </Col>
                     <Col md="8" xs="7">
                       <div className="numbers">
-                        <p className="card-category">Capacity</p>
-                        <CardTitle tag="p">150GB</CardTitle>
+                        <p className="card-category">Processos</p>
+                        <CardTitle tag="p">{this.state.processos_total}</CardTitle>
                         <p />
                       </div>
                     </Col>
@@ -150,7 +150,7 @@ class Dashboard extends React.Component {
                 </CardFooter>
               </Card>
             </Col>
-            <Col lg="3" md="6" sm="6">
+            {/* <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
                 <CardBody>
                   <Row>
@@ -227,8 +227,8 @@ class Dashboard extends React.Component {
                   </div>
                 </CardFooter>
               </Card>
-            </Col>
-          </Row> */}
+            </Col> */}
+          </Row>
 
           <Row>
               <Col md="12">
