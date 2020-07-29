@@ -66,7 +66,7 @@ class Login extends React.Component {
                 <Col md="8" style={{margin:"0 auto"}}>
                   <Card className="card-user">
                     <CardHeader>
-                      <CardTitle tag="h5">Login</CardTitle>
+                      <CardTitle tag="h5">Acessar minha conta</CardTitle>
                     </CardHeader>
                     <CardBody>
                       <Form onSubmit={this.handleSignIn}>
@@ -74,7 +74,7 @@ class Login extends React.Component {
                         <Row>
                           <Col>
                             <FormGroup>
-                              <label>Email</label>
+                              <label>Endereço de e-mail: </label>
                               <Input
                                 placeholder="Nome de Usuário"
                                 type="email"
@@ -87,7 +87,7 @@ class Login extends React.Component {
                           <Col>
                             <FormGroup>
                               <label htmlFor="exampleInputEmail1">
-                                Senha
+                                Senha:
                               </label>
                               <Input
                                 type="password"
@@ -103,7 +103,7 @@ class Login extends React.Component {
                               color="primary"
                               type="submit"
                             >
-                              Enviar
+                              Login
                             </Button>
                           </div>
                         </Row>
