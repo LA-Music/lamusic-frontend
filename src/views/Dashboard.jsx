@@ -28,6 +28,7 @@ class Dashboard extends React.Component {
       super(props);
       this.state = {
         processos:[],
+        processos_rev:0,
         obras:[],
         fonogramas:[],
         modal: false,
@@ -40,21 +41,27 @@ class Dashboard extends React.Component {
     }
 
   componentDidMount(){
-      api.get('/processo-list/1').then(res=>{
-          this.setState({processos:res.data.docs, processos_total:res.data.totalDocs})
-          console.log(res.data.totalDocs)
-      })
+    api.get('/processo-list/1').then(res=>{
+        this.setState({
+          processos:res.data.docs, 
+          processos_total:res.data.totalDocs, 
+          processos_rev: res.data.docs.filter((obj) => obj.reviewed === true).length
+        })
+    })
   }
+  
   toggle() {
     this.setState({
       modal: !this.state.modal
     });
   }
+  
   toggleFonograma() {
     this.setState({
       modalFonograma: !this.state.modalFonograma
     });
   }
+  
   modalContent(obras){
     this.setState({
       obras: obras
@@ -62,12 +69,36 @@ class Dashboard extends React.Component {
 
     this.toggle()
   }
+  
   modalContentFonogramas(fonogramas){
     this.setState({
       fonogramas: fonogramas
     });
 
     this.toggleFonograma()
+  }
+
+  
+  async checkProcesso(processo_id, reviewed){
+    const check = reviewed ? false : true
+    const revisados = this.state.processos_rev 
+    
+    try {
+      const response = await api.post("/checkProcesso", {
+        "processo_id":processo_id,
+        "check_value":check
+      });
+      const key = this.state.processos.findIndex(el => el._id === processo_id)
+      const processos = this.state.processos
+      processos[key].reviewed = response.data.processo.reviewed
+      this.setState({
+        processos,
+        processos_rev: (processos[key].reviewed ? revisados+1 : revisados-1)
+      });         
+      alert("Atualizado com Sucesso")
+    } catch (err) {
+      alert("Erro"+err)
+    }
   }
   render() {
     return (
@@ -135,7 +166,7 @@ class Dashboard extends React.Component {
                     </Col>
                     <Col md="8" xs="7">
                       <div className="numbers">
-                        <p className="card-category">Processos</p>
+                        <p className="card-category">Nº Processos</p>
                         <CardTitle tag="p">{this.state.processos_total}</CardTitle>
                         <p />
                       </div>
@@ -145,7 +176,7 @@ class Dashboard extends React.Component {
                 <CardFooter>
                   <hr />
                   <div className="stats">
-                    <i className="fas fa-sync-alt" /> Update Now
+                    <i className="fas fa-sync-alt" />{this.state.processos_rev} Processos Prontos
                   </div>
                 </CardFooter>
               </Card>
@@ -240,7 +271,7 @@ class Dashboard extends React.Component {
               <Table>
                   <thead>
                       <tr>
-                      <th>#</th>
+                      <th>Pronto</th>
                       <th>Data</th>
                       {/*<th>Tipo</th>*/}
                       <th>Nome</th>
@@ -255,7 +286,13 @@ class Dashboard extends React.Component {
                       {
                       this.state.processos.map((processo,index) =>
                           <tr key={processo._id}>
-                              <td><Input type="checkbox" style={{position:"inherit",marginLeft:"0px"}}/>{' '}</td>
+                              <td>
+                                <Input 
+                                  type="checkbox" 
+                                  style={{position:"inherit",marginLeft:"0px"}} 
+                                  onChange={this.checkProcesso.bind(this, processo._id, processo.reviewed)}
+                                  defaultChecked={processo.reviewed?true:false}
+                                  />{' '}</td>
                               {/*<td>{processo.tipo}</td>*/}
                               <td>{processo.createdAt}</td>
                               <td>{processo.nome}</td>
@@ -264,7 +301,6 @@ class Dashboard extends React.Component {
                               <td>{processo.status_fonograma}</td>
                               <td className="detalhes" onClick={this.modalContent.bind(this,processo.obras)}><i className="nc-icon nc-simple-add"></i></td>
                               <td className="detalhes" onClick={this.modalContentFonogramas.bind(this,processo.fonogramas)}><i className="nc-icon nc-simple-add"></i></td>
-
                           </tr>
                           )
                       }
