@@ -37,12 +37,12 @@ class listCredito extends Component{
                 <Table >
                     <thead>
                         <tr>
-                        {/* <th>#</th> */}
-                        <th>Nome</th>
-                        <th>Email</th>
-                        <th>Cpf</th>
+                        <th>Produtor</th>
+                        <th>Email do Requerente</th>
                         <th>Telefone</th>
+                        <th>Nome Artista</th>
                         <th>Nome Artístico</th>
+                        <th>Cpf</th>
                         <th>Associação</th>
                         <th>Data</th>
                         </tr>
@@ -51,14 +51,14 @@ class listCredito extends Component{
                         {
                         this.state.creditos.map((credito,index)=> 
                             <tr key={credito._id}>
-                                {/* <td>{index}</td> */}
-                                <td>{credito.nome}</td>
-                                <td>{credito.email}</td>
-                                <td>{credito.cpf}</td>
-                                <td>{credito.telefone}</td>
-                                <td>{credito.nome_artistico}</td>
-                                <td>{credito.associacao}</td>
-                                <td>{credito.createdAt}</td>
+                                <td>{credito.nome_produtor||"-----"}</td>
+                                <td>{credito.email||"-----"}</td>
+                                <td>{credito.telefone||"-----"}</td>
+                                <td>{credito.nome||"-----"}</td>
+                                <td>{credito.nome_artistico||"-----"}</td>
+                                <td>{credito.cpf||"-----"}</td>
+                                <td>{credito.associacao||"-----"}</td>
+                                <td>{credito.createdAt||"-----"}</td>
                             </tr>
                             )
                         }
