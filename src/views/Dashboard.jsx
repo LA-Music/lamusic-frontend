@@ -1,5 +1,6 @@
 import React from "react";
 import api from '../services/api'
+import { CSVLink, CSVDownload } from "react-csv";
 
 // react plugin used to create charts
 import { Line, Pie } from "react-chartjs-2";
@@ -34,7 +35,7 @@ class Dashboard extends React.Component {
         modal: false,
         modalFonograma: false,
         modalTitle:"Obras Recuperadas",
-        modalFonogramaTitle:"Fonogramas Recuperados"
+        modalFonogramaTitle:"Fonogramas Recuperados",
       };
       this.toggle = this.toggle.bind(this);
       this.toggleFonograma = this.toggleFonograma.bind(this);
@@ -176,8 +177,14 @@ class Dashboard extends React.Component {
                 <CardFooter>
                   <hr />
                   <div className="stats">
-                    <i className="fas fa-sync-alt" />{this.state.processos_rev} Processos Prontos
+                    <i className="fas fa-sync-alt" />{this.state.processos_rev} Processos Prontos 
                   </div>
+                  <br/>
+                  <CSVLink 
+                      data={this.state.processos} 
+                      filename={"Processos.csv"}
+                      className="btn btn-primary"> Exportar Processos </CSVLink>
+                    <CSVDownload data={this.state.processos} target="_blank" />
                 </CardFooter>
               </Card>
             </Col>
