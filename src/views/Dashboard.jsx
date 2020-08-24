@@ -1,6 +1,7 @@
 import React from "react";
 import api from '../services/api'
 import { CSVLink, CSVDownload } from "react-csv";
+import classnames from 'classnames';
 
 // react plugin used to create charts
 import { Line, Pie } from "react-chartjs-2";
@@ -15,7 +16,7 @@ import {
   CardTitle,
   Row,
   Table,Button,
-  Col,Modal, ModalHeader, ModalBody, ModalFooter, Input
+  Col,Modal, ModalHeader, ModalBody, ModalFooter, Input, TabContent, TabPane, Nav, NavItem, NavLink,CardText
 } from "reactstrap";
 // core components
 import {
@@ -33,12 +34,11 @@ class Dashboard extends React.Component {
         obras:[],
         fonogramas:[],
         modal: false,
-        modalFonograma: false,
-        modalTitle:"Obras Recuperadas",
-        modalFonogramaTitle:"Fonogramas Recuperados",
+        modalTitle:"",
+        activeTab: '1'
       };
       this.toggle = this.toggle.bind(this);
-      this.toggleFonograma = this.toggleFonograma.bind(this);
+      this.toggleTab = this.toggleTab.bind(this);
     }
 
   componentDidMount(){
@@ -50,36 +50,30 @@ class Dashboard extends React.Component {
         })
     })
   }
-  
+
+  toggleTab(tab) {
+    if (this.state.activeTab !== tab) {
+      this.setState({
+        activeTab: tab
+      });
+    }
+  }
+
   toggle() {
     this.setState({
       modal: !this.state.modal
     });
   }
   
-  toggleFonograma() {
+  modalContentResultados(processo){
     this.setState({
-      modalFonograma: !this.state.modalFonograma
-    });
-  }
-  
-  modalContent(obras){
-    this.setState({
-      obras: obras
-    });
-
+      modalTitle: "Resultados de "+processo.nome,
+      obras: processo.obras,
+      fonogramas: processo.fonogramas
+    })
     this.toggle()
   }
-  
-  modalContentFonogramas(fonogramas){
-    this.setState({
-      fonogramas: fonogramas
-    });
 
-    this.toggleFonograma()
-  }
-
-  
   async checkProcesso(processo_id, reviewed){
     const check = reviewed ? false : true
     const revisados = this.state.processos_rev 
@@ -105,54 +99,72 @@ class Dashboard extends React.Component {
     return (
       <>
         <div className="content">
-        <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+       <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
          <ModalHeader toggle={this.toggle}>{this.state.modalTitle}</ModalHeader>
          <ModalBody>
-         {
+         <Nav tabs>
+        <NavItem>
+          <NavLink
+            className={classnames({ active: this.state.activeTab === '1' })}
+            onClick={() => { this.toggleTab('1'); }}
+          >
+            Obras
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink
+            className={classnames({ active: this.state.activeTab === '2' })}
+            onClick={() => { this.toggleTab('2'); }}
+          >
+            Fonogramas
+          </NavLink>
+        </NavItem>
+      </Nav>
+      <TabContent activeTab={this.state.activeTab}>
+        <TabPane tabId="1">
+        {
          this.state.obras.map((obra,index) =>
-            <div key={obra._id}>
-            <h3>cód Ecad {obra.codEcad}</h3>
-             <ul className="modalObras">
-                 <li><b>Título: </b>{obra.titulo}</li>
-                 <li><b>Interprete: </b>{obra.interprete}</li>
-                 <li><b>Competencia: </b>{obra.competencia}</li>
-                 <li><b>Faixa: </b>{obra.faixa}</li>
-                 <li><b>Motivo: </b>{obra.motivo}</li>
-                 <li><b>Execucao: </b>{obra.execucao}</li>
-                 <li><b>Autores: </b>{obra.autores}</li>
-             </ul>
-             </div>
+            <Row key={obra._id}>
+              <CardBody>
+              <CardTitle>cód Ecad {obra.codEcad}</CardTitle>
+              <ul className="modalObras">
+                  <li><b>Título: </b>{obra.titulo}</li>
+                  <li><b>Interprete: </b>{obra.interprete}</li>
+                  <li><b>Competencia: </b>{obra.competencia}</li>
+                  <li><b>Faixa: </b>{obra.faixa}</li>
+                  <li><b>Motivo: </b>{obra.motivo}</li>
+                  <li><b>Execucao: </b>{obra.execucao}</li>
+                  <li><b>Autores: </b>{obra.autores}</li>
+              </ul>
+              </CardBody>
+             </Row>
              )
          }
-         </ModalBody>
-         <ModalFooter>
-           {/* <Button color='primary' onClick={this.toggle}>Do Something</Button>{' '} */}
-           <Button color='primary' onClick={this.toggle}>Ok</Button>
-         </ModalFooter>
-       </Modal>
-
-       <Modal isOpen={this.state.modalFonograma} toggle={this.toggleFonograma} className={this.props.className}>
-         <ModalHeader toggle={this.toggle}>{this.state.modalFonogramaTitle}</ModalHeader>
-         <ModalBody>
-         {
+        </TabPane>
+        <TabPane tabId="2">
+        {
          this.state.fonogramas.map((fonograma,index) =>
-            <div key={fonograma._id}>
-            <h3>cód Ecad {fonograma.codEcad}</h3>
-             <ul className="modalObras">
-                 <li><b>Título: </b>{fonograma.titulo}</li>
-                 <li><b>Interprete: </b>{fonograma.interprete}</li>
-                 <li><b>Competencia: </b>{fonograma.competencia}</li>
-                 <li><b>Faixa: </b>{fonograma.faixa}</li>
-                 <li><b>Motivo: </b>{fonograma.motivo}</li>
-                 <li><b>Execucao: </b>{fonograma.execucao}</li>
-                 <li><b>Autores: </b>{fonograma.autores}</li>
-             </ul>
-             </div>
+            <Row key={fonograma._id}>
+            <CardBody>
+            <CardTitle>cód Ecad {fonograma.codEcad}</CardTitle>
+              <ul className="modalObras">
+                  <li><b>Título: </b>{fonograma.titulo}</li>
+                  <li><b>Interprete: </b>{fonograma.interprete}</li>
+                  <li><b>Competencia: </b>{fonograma.competencia}</li>
+                  <li><b>Faixa: </b>{fonograma.faixa}</li>
+                  <li><b>Motivo: </b>{fonograma.motivo}</li>
+                  <li><b>Execucao: </b>{fonograma.execucao}</li>
+                  <li><b>Autores: </b>{fonograma.autores}</li>
+              </ul>
+            </CardBody>
+             </Row>
              )
          }
+        </TabPane>
+      </TabContent>
          </ModalBody>
          <ModalFooter>
-           <Button color='primary' onClick={this.toggleFonograma}>Ok</Button>
+           <Button color='primary' onClick={this.toggle}>Ok</Button>
          </ModalFooter>
        </Modal>
           <Row>
@@ -184,88 +196,9 @@ class Dashboard extends React.Component {
                       data={this.state.processos} 
                       filename={"Processos.csv"}
                       className="btn btn-primary"> Exportar Processos </CSVLink>
-                    <CSVDownload data={this.state.processos} target="_blank" />
                 </CardFooter>
               </Card>
             </Col>
-            {/* <Col lg="3" md="6" sm="6">
-              <Card className="card-stats">
-                <CardBody>
-                  <Row>
-                    <Col md="4" xs="5">
-                      <div className="icon-big text-center icon-warning">
-                        <i className="nc-icon nc-money-coins text-success" />
-                      </div>
-                    </Col>
-                    <Col md="8" xs="7">
-                      <div className="numbers">
-                        <p className="card-category">Revenue</p>
-                        <CardTitle tag="p">$ 1,345</CardTitle>
-                        <p />
-                      </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-                <CardFooter>
-                  <hr />
-                  <div className="stats">
-                    <i className="far fa-calendar" /> Last day
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
-            <Col lg="3" md="6" sm="6">
-              <Card className="card-stats">
-                <CardBody>
-                  <Row>
-                    <Col md="4" xs="5">
-                      <div className="icon-big text-center icon-warning">
-                        <i className="nc-icon nc-vector text-danger" />
-                      </div>
-                    </Col>
-                    <Col md="8" xs="7">
-                      <div className="numbers">
-                        <p className="card-category">Errors</p>
-                        <CardTitle tag="p">23</CardTitle>
-                        <p />
-                      </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-                <CardFooter>
-                  <hr />
-                  <div className="stats">
-                    <i className="far fa-clock" /> In the last hour
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col>
-            <Col lg="3" md="6" sm="6">
-              <Card className="card-stats">
-                <CardBody>
-                  <Row>
-                    <Col md="4" xs="5">
-                      <div className="icon-big text-center icon-warning">
-                        <i className="nc-icon nc-favourite-28 text-primary" />
-                      </div>
-                    </Col>
-                    <Col md="8" xs="7">
-                      <div className="numbers">
-                        <p className="card-category">Followers</p>
-                        <CardTitle tag="p">+45K</CardTitle>
-                        <p />
-                      </div>
-                    </Col>
-                  </Row>
-                </CardBody>
-                <CardFooter>
-                  <hr />
-                  <div className="stats">
-                    <i className="fas fa-sync-alt" /> Update now
-                  </div>
-                </CardFooter>
-              </Card>
-            </Col> */}
           </Row>
 
           <Row>
@@ -283,10 +216,9 @@ class Dashboard extends React.Component {
                       {/*<th>Tipo</th>*/}
                       <th>Nome</th>
                       <th>Email</th>
-                      <th>Status</th>
+                      <th>Status Obras</th>
                       <th>Status Fono</th>
-                      <th style={{textAlign: "center"}}>Obras</th>
-                      <th style={{textAlign: "center"}}>Fonogramas</th>
+                      <th style={{textAlign: "center"}}>Resultados</th>
                       </tr>
                   </thead>
                   <tbody>
@@ -306,8 +238,7 @@ class Dashboard extends React.Component {
                               <td>{processo.email}</td>
                               <td>{processo.status}</td>
                               <td>{processo.status_fonograma}</td>
-                              <td className="detalhes" onClick={this.modalContent.bind(this,processo.obras)}><i className="nc-icon nc-simple-add"></i></td>
-                              <td className="detalhes" onClick={this.modalContentFonogramas.bind(this,processo.fonogramas)}><i className="nc-icon nc-simple-add"></i></td>
+                              <td className="detalhes" onClick={this.modalContentResultados.bind(this, processo)}><i className="nc-icon nc-simple-add"></i></td>
                           </tr>
                           )
                       }
