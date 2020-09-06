@@ -5,6 +5,7 @@ import Musica from "views/admin/Musica"
 import Contato from "views/admin/Contato"
 import UserPage from "views/User.jsx";
 
+import GestaoRepo from "views/user/Gestao_Repositorio"
 import CreditoForm from "views/user/Credito.jsx"
 import ContatoForm from "views/user/Contato.jsx"
 import MusicaForm from "views/user/Musica.jsx"
@@ -56,6 +57,13 @@ var routes = [
 ];
 
 var routes_user = [
+  {
+    path: "/gestao-repositorio",
+    name: "Gestão do Repositório",
+    icon: "nc-icon nc-chart-bar-32",
+    component: GestaoRepo,
+    layout: "/user"
+  },
   {
     path: "/credito-retido",
     name: "Credito Retido",
