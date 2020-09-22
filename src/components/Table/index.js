@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Table } from 'reactstrap';
+import { MoreItems } from './styles'
+const DynamicTable = ({header, body, limitItems, moreItems }) => {
 
-const DynamicTable = ({header, body}) => {
+  const [ showItems, setItems ] = useState(limitItems)
 
   function createRow(){
     var data = []
-    for (let a = 0; a < body.length; a++) {
+    let itemsLength = showItems || body.length
+    
+    for (let a = 0; a < itemsLength; a++) {
       var row =[]
       for (let b = 0; b < header.length; b++) {
         row.push(
@@ -18,18 +22,25 @@ const DynamicTable = ({header, body}) => {
   }
 
   return (
-    <Table borderless>
-      <thead>
-        <tr>
-          {header.map((hd) => (
-            <th key={hd.key}>{hd.name}</th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {createRow()}
-      </tbody>
-    </Table>
+    <>
+      <Table borderless>
+        <thead>
+          <tr>
+            {header.map((hd) => (
+              <th key={hd.key}>{hd.name}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {createRow()}
+        </tbody>
+      </Table>
+      {limitItems && showItems < body.length && (
+        <div className="d-flex align-items-center justify-content-center">
+          <MoreItems onClick={() => setItems(showItems + moreItems)} style={{cursor: 'pointer'}}>Mostrar mais</MoreItems>
+        </div>
+      )}
+    </>
   )
 }
 

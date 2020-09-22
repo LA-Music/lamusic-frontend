@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardTitle, Row, Col } from 'reactstrap';
 import ReactApexChart from 'react-apexcharts'
 import DynamicTable from 'components/Table';
-
+import  { Cards } from './styles'
 const Index = () => {
   const [grafObras] = useState({
     series: [44, 55, 13, 43],
@@ -86,32 +86,32 @@ const Index = () => {
     <div className="content">
       <Row>
         <Col sm="4">
-          <Card body>
+          <Cards body>
             <CardTitle><h6>Gênero</h6></CardTitle>
             <div id="chart">
               <ReactApexChart options={grafObras.options} series={grafObras.series} type="pie" width={380} />
             </div>
-          </Card>
+          </Cards>
         </Col>
         <Col sm="8">
-          <Card body>
+          <Cards body>
             <CardTitle><h6>Audiência</h6></CardTitle>
             <div id="chart">
               <ReactApexChart options={grafAudiencia.options} series={grafAudiencia.series} height={270}/>
             </div>
-          </Card>
+          </Cards>
         </Col>
         <Col sm="6">
-          <Card body>
-            <CardTitle className="pr-5 d-flex justify-content-between align-items-center"><h6>Obras</h6><h6>Últimos 90 dias</h6></CardTitle>
+          <Cards body>
+            <CardTitle className="pr-5 d-flex justify-content-between align-items-center"><h6>Obras</h6><span>Últimos 90 dias</span></CardTitle>
             <DynamicTable {...TableObras} />
-          </Card>
+          </Cards>
         </Col>
         <Col sm="6">
-          <Card body>
-            <CardTitle className="pr-5 d-flex justify-content-between align-items-center"><h6>Composições em registro</h6><h6>Últimos 90 dias</h6></CardTitle>
+          <Cards body>
+            <CardTitle className="pr-5 d-flex justify-content-between align-items-center"><h6>Composições em registro</h6><span>Últimos 90 dias</span></CardTitle>
             <DynamicTable {...TableRegistro} />
-          </Card>
+          </Cards>
         </Col>
       </Row>
     </div>

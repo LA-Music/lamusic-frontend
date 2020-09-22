@@ -1,11 +1,11 @@
 import styled from 'styled-components';
-import { Card } from 'reactstrap';
 
-export const Cards = styled(Card)`
-  border-radius: 2px;
-
-  h6{
-    text-transform: initial !important;
+export const TableContainer = styled.div`
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+  background-color: #ffffff;
+  padding: 1.5rem;
+  
+  h2{
     font-size: 20px;
     font-weight: 600 !important;
     font-style: normal;
@@ -25,12 +25,14 @@ export const Cards = styled(Card)`
         font-style: normal;
         font-weight: 600 !important;
         font-size: 14px;
+        
         text-transform: initial !important;
         color: #66615B;
+        padding-bottom: 0;
       }
     }
   }
-  
+
   tbody{
     tr{
       td{
