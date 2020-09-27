@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardTitle, Row, Col } from 'reactstrap';
+import { CardTitle, Row, Col } from 'reactstrap';
 import ReactApexChart from 'react-apexcharts'
 import DynamicTable from 'components/Table';
 import  { Cards } from './styles'

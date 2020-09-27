@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Table } from 'reactstrap';
 import { MoreItems } from './styles'
-const DynamicTable = ({header, body, limitItems, moreItems }) => {
+
+const DynamicTable = ({header, body, limitItems, moreItems, viewModal }) => {
 
   const [ showItems, setItems ] = useState(limitItems)
 
@@ -16,7 +17,8 @@ const DynamicTable = ({header, body, limitItems, moreItems }) => {
             <td>{body[a][header[b].key]}</td>
         )
       }
-      data.push(<tr>{row}</tr>)
+      viewModal ? data.push(<tr onClick={() => viewModal(body[a])}>{row}</tr>) : data.push(<tr>{row}</tr>)
+      
     }
     return data
   }

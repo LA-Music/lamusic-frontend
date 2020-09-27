@@ -2,6 +2,10 @@ import { createStore } from 'redux'
 
 const INITIAL_STATE = {
   data: { type: 'Login' },
+  info:{
+    type: '',
+    typeSolicitacao: 'kanban'
+  },
   Login:{
     inputs:[
       { label: 'Endereço de e-mail:', 
@@ -54,9 +58,12 @@ const INITIAL_STATE = {
 
 function form(state = INITIAL_STATE, action){
   switch (action.type) {
-    case 'TYPE_FORM':
-      console.log(action.payload)
+    case 'TYPE_FORM': {
       return { ...state, data:{...state.data, type: action.payload}}
+    }
+      case 'SET_INFO' : {
+        return { ...state , info:{...state.info, ...action.payload}}
+      }
     default:
       return state;
   }
