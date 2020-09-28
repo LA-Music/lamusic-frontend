@@ -2,9 +2,12 @@ import React from "react";
 import api from '../services/api'
 import { CSVLink, CSVDownload } from "react-csv";
 import classnames from 'classnames';
+import InfiniteScroll from "react-infinite-scroll-component";
+import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
+import Loader from 'react-loader-spinner'
 
 // react plugin used to create charts
-import { Line, Pie } from "react-chartjs-2";
+// import { Line, Pie } from "react-chartjs-2";
 import '../assets/css/Dashboard.css'
 
 // reactstrap components
@@ -35,15 +38,20 @@ class Dashboard extends React.Component {
         fonogramas:[],
         modal: false,
         modalTitle:"",
-        activeTab: '1'
+        activeTab: '1',
+        hasMore: true,
+        page:1
       };
       this.toggle = this.toggle.bind(this);
       this.toggleTab = this.toggleTab.bind(this);
     }
 
   componentDidMount(){
-    api.get('/processo-list/1').then(res=>{
+    api.get('/processo-list/'+this.page).then(res=>{
+      console.log(this.state.page)
+      
         this.setState({
+          page: this.state.page+1,
           processos:res.data.docs, 
           processos_total:res.data.totalDocs, 
           processos_rev: res.data.docs.filter((obj) => obj.reviewed === true).length
@@ -74,6 +82,20 @@ class Dashboard extends React.Component {
     this.toggle()
   }
 
+  fetchMoreData = () => {
+    if (this.state.processos.length >= this.state.processos_total) {
+      this.setState({ hasMore: false });
+      return;
+    }
+    setTimeout(() => {
+    api.get('/processo-list/'+this.state.page).then(res=>{
+      this.setState({
+        page: this.state.page+1,
+        processos: this.state.processos.concat(res.data.docs)
+      })
+    }) 
+  }, 1500); 
+  };
   async checkProcesso(processo_id, reviewed){
     const check = reviewed ? false : true
     const revisados = this.state.processos_rev 
@@ -98,8 +120,9 @@ class Dashboard extends React.Component {
   render() {
     return (
       <>
-        <div className="content">
-       <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+      {/* Aqui */}
+      <div className="content">
+      <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
          <ModalHeader toggle={this.toggle}>{this.state.modalTitle}</ModalHeader>
          <ModalBody>
          <Nav tabs>
@@ -120,6 +143,7 @@ class Dashboard extends React.Component {
           </NavLink>
         </NavItem>
       </Nav>
+      
       <TabContent activeTab={this.state.activeTab}>
         <TabPane tabId="1">
         {
@@ -167,7 +191,7 @@ class Dashboard extends React.Component {
            <Button color='primary' onClick={this.toggle}>Ok</Button>
          </ModalFooter>
        </Modal>
-          <Row>
+       <Row>
             <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
                 <CardBody>
@@ -195,36 +219,66 @@ class Dashboard extends React.Component {
                   <CSVLink 
                       data={this.state.processos} 
                       filename={"Processos.csv"}
-                      className="btn btn-primary"> Exportar Processos </CSVLink>
+                      className="btn btn-primary"
+                      separator={";"}
+                      > Exportar Processos </CSVLink>
                 </CardFooter>
               </Card>
             </Col>
           </Row>
 
-          <Row>
+        <hr />
+        <Row>
               <Col md="12">
               <Card>
               <CardHeader>
                   <CardTitle tag="h4">Processos</CardTitle>
               </CardHeader>
               <CardBody className="processosTable">
+              <InfiniteScroll
+                    dataLength={this.state.processos.length}
+                    next={this.fetchMoreData}
+                    hasMore={this.state.hasMore}
+                    loader={
+                      <p style={{ textAlign: "center" }}>
+
+                    <Loader
+                      type="ThreeDots"
+                      color="#f8c558"
+                      height={80}
+                      width={80}
+                      timeout={1500} //3 secs
+                   />
+                   </p>
+                  }
+                    height={500}
+                    endMessage={
+                      <p style={{ textAlign: "center" }}>
+                        <b>Todos os processos já foram listados</b>
+                      </p>
+                    }
+                    >
+
               <Table>
                   <thead>
                       <tr>
+                      <th>#</th>
                       <th>Pronto</th>
                       <th>Data</th>
-                      {/*<th>Tipo</th>*/}
                       <th>Nome</th>
                       <th>Email</th>
+                      <th>Associado</th>
                       <th>Status Obras</th>
                       <th>Status Fono</th>
                       <th style={{textAlign: "center"}}>Resultados</th>
                       </tr>
                   </thead>
                   <tbody>
-                      {
+                  
+                   {
                       this.state.processos.map((processo,index) =>
                           <tr key={processo._id}>
+                            <td>{index+1}</td>
                               <td>
                                 <Input 
                                   type="checkbox" 
@@ -232,23 +286,27 @@ class Dashboard extends React.Component {
                                   onChange={this.checkProcesso.bind(this, processo._id, processo.reviewed)}
                                   defaultChecked={processo.reviewed?true:false}
                                   />{' '}</td>
-                              {/*<td>{processo.tipo}</td>*/}
                               <td>{processo.createdAt}</td>
                               <td>{processo.nome}</td>
                               <td>{processo.email}</td>
+                              <td>{processo.cadastro_Abrammus?"Sim":"Não"}</td>
                               <td>{processo.status}</td>
                               <td>{processo.status_fonograma}</td>
                               <td className="detalhes" onClick={this.modalContentResultados.bind(this, processo)}><i className="nc-icon nc-simple-add"></i></td>
                           </tr>
                           )
                       }
+                      
                   </tbody>
-              </Table>
+                  </Table>
+                  </InfiniteScroll>
               </CardBody>
               </Card>
               </Col>
           </Row>
-        </div>
+        
+      </div>
+        
       </>
     );
   }
