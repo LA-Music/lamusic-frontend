@@ -1,22 +1,4 @@
-/*!
-
-=========================================================
-* Paper Dashboard React - v1.1.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/paper-dashboard-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-
-* Licensed under MIT (https://github.com/creativetimofficial/paper-dashboard-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import {
   Collapse,
@@ -35,94 +17,102 @@ import {
   InputGroupAddon,
   Input
 } from "reactstrap";
+import { useDispatch, useSelector} from 'react-redux';
+import routes, { routesUser } from "routes.js";
+import IconKanban from 'assets/img/icon-kanban.svg'
+import IconKanbanSelected from 'assets/img/icon-kanban-selected.svg'
+import IconList from 'assets/img/icon-list.svg'
+import IconListSelected from 'assets/img/icon-list-selected.svg'
 
-import routes from "routes.js";
+function Header (props) {
+  const dispatch = useDispatch();
+  const { typeSolicitacao } = useSelector(state => state.info)
+  const [ st, setState ] = useState({
+    isOpen: false,
+    dropdownOpen: false,
+    color: 'transparent',
+  })
 
-class Header extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isOpen: false,
-      dropdownOpen: false,
-      color: "transparent"
-    };
-    this.toggle = this.toggle.bind(this);
-    this.dropdownToggle = this.dropdownToggle.bind(this);
-    this.sidebarToggle = React.createRef();
+  const sidebarToggle = useRef();
+  
+ function toggle() {
+    const { isOpen } = st
+    isOpen ? setState({...st, color: "transparent" }) :  setState({...st, color: "dark" });
+
+    setState({...st, isOpen: !isOpen });
   }
-  toggle() {
-    if (this.state.isOpen) {
-      this.setState({
-        color: "transparent"
-      });
-    } else {
-      this.setState({
-        color: "dark"
-      });
-    }
-    this.setState({
-      isOpen: !this.state.isOpen
-    });
+
+  function dropdownToggle(e) {
+    setState({...st, dropdownOpen: !st.dropdownOpen });
   }
-  dropdownToggle(e) {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen
-    });
-  }
-  getBrand() {
-    let brandName = "Default Brand";
+
+ function getBrand() {
+    let brandName = null;
+
     routes.map((prop, key) => {
       if (window.location.href.indexOf(prop.layout + prop.path) !== -1) {
         brandName = prop.name;
       }
       return null;
     });
-    return brandName;
-  }
-  openSidebar() {
-    document.documentElement.classList.toggle("nav-open");
-    this.sidebarToggle.current.classList.toggle("toggled");
-  }
-  // function that adds color dark/transparent to the navbar on resize (this is for the collapse)
-  updateColor() {
-    if (window.innerWidth < 993 && this.state.isOpen) {
-      this.setState({
-        color: "dark"
-      });
-    } else {
-      this.setState({
-        color: "transparent"
+    
+    if (brandName === null) {
+      routesUser.map((prop, key) => {
+        if (window.location.href.indexOf(prop.layout + prop.path) !== -1) {
+          brandName = prop.name;
+        }
+        return null;
       });
     }
+
+    return brandName;
   }
-  componentDidMount() {
-    window.addEventListener("resize", this.updateColor.bind(this));
+
+  function openSidebar() {
+    document.documentElement.classList.toggle("nav-open");
+    sidebarToggle.current.classList.toggle("toggled");
   }
-  componentDidUpdate(e) {
+  // function that adds color dark/transparent to the navbar on resize (this is for the collapse)
+  
+  useEffect(() => {
+    window.addEventListener("resize", updateColor(this));
+    function updateColor() {
+      if (window.innerWidth < 993 && st.isOpen) {
+        setState({...st, color: "dark" });
+      } else {
+        setState({...st, color: "transparent" });
+      }
+    }
+  },[st]) 
+    
+  useEffect((e) => {
     if (
       window.innerWidth < 993 &&
       e.history.location.pathname !== e.location.pathname &&
       document.documentElement.className.indexOf("nav-open") !== -1
     ) {
       document.documentElement.classList.toggle("nav-open");
-      this.sidebarToggle.current.classList.toggle("toggled");
+      sidebarToggle.current.classList.toggle("toggled");
     }
-  }
-  render() {
+  },[])
+
+    const { color, isOpen, dropdownOpen } = st;
+    const { pathname } = props.location;
+
     return (
       // add or remove classes depending if we are on full-screen-maps page or not
       <Navbar
         color={
-          this.props.location.pathname.indexOf("full-screen-maps") !== -1
+          pathname.indexOf("full-screen-maps") !== -1
             ? "dark"
-            : this.state.color
+            : color
         }
         expand="lg"
         className={
-          this.props.location.pathname.indexOf("full-screen-maps") !== -1
+          pathname.indexOf("full-screen-maps") !== -1
             ? "navbar-absolute fixed-top"
             : "navbar-absolute fixed-top " +
-              (this.state.color === "transparent" ? "navbar-transparent " : "")
+              (color === "transparent" ? "navbar-transparent " : "")
         }
       >
         <Container fluid>
@@ -130,27 +120,43 @@ class Header extends React.Component {
             <div className="navbar-toggle">
               <button
                 type="button"
-                ref={this.sidebarToggle}
+                ref={sidebarToggle}
                 className="navbar-toggler"
-                onClick={() => this.openSidebar()}
+                onClick={() => openSidebar()}
               >
                 <span className="navbar-toggler-bar bar1" />
                 <span className="navbar-toggler-bar bar2" />
                 <span className="navbar-toggler-bar bar3" />
               </button>
             </div>
-            <NavbarBrand href="/">{this.getBrand()}</NavbarBrand>
+            <NavbarBrand href="/">{getBrand()}</NavbarBrand>
           </div>
-          <NavbarToggler onClick={this.toggle}>
+          
+          <NavbarToggler onClick={toggle}>
             <span className="navbar-toggler-bar navbar-kebab" />
             <span className="navbar-toggler-bar navbar-kebab" />
             <span className="navbar-toggler-bar navbar-kebab" />
           </NavbarToggler>
           <Collapse
-            isOpen={this.state.isOpen}
+            isOpen={isOpen}
             navbar
-            className="justify-content-end"
+            className="justify-content-between"
           >
+            <div></div>
+            <div>
+              {typeSolicitacao === 'kanban' ? (
+                <>
+                  <img src={IconKanbanSelected} alt="Kanban" onClick={() => dispatch({type: 'SET_INFO', payload: {typeSolicitacao: 'kanban'}})} className="mx-3 "  style={{cursor: 'pointer'}}/>
+                  <img src={IconList} alt="List" onClick={() => dispatch({type: 'SET_INFO', payload: {typeSolicitacao: 'list'}})}  style={{cursor: 'pointer'}}/>
+                </>
+                ): (
+                  <>
+                    <img src={IconKanban} alt="Kanban" onClick={() => dispatch({type: 'SET_INFO', payload: {typeSolicitacao: 'kanban'}})} className="mx-3 "  style={{cursor: 'pointer'}}/>
+                    <img src={IconListSelected} alt="List" onClick={() => dispatch({type: 'SET_INFO', payload: {typeSolicitacao: 'list'}})}  style={{cursor: 'pointer'}}/>
+                  </>
+              )}
+            </div>
+            <div className="d-flex">
             <form>
               <InputGroup className="no-border">
                 <Input placeholder="Search..." />
@@ -172,8 +178,8 @@ class Header extends React.Component {
               </NavItem>
               <Dropdown
                 nav
-                isOpen={this.state.dropdownOpen}
-                toggle={e => this.dropdownToggle(e)}
+                isOpen={dropdownOpen}
+                toggle={e => dropdownToggle(e)}
               >
                 <DropdownToggle caret nav>
                   <i className="nc-icon nc-bell-55" />
@@ -196,11 +202,11 @@ class Header extends React.Component {
                 </Link>
               </NavItem>
             </Nav>
+            </div>
           </Collapse>
         </Container>
       </Navbar>
     );
   }
-}
 
 export default Header;

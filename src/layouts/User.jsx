@@ -1,7 +1,6 @@
 import React from "react";
 import PerfectScrollbar from "perfect-scrollbar";
 import { Route, Switch, Redirect } from "react-router-dom";
-
 import DemoNavbar from "components/Navbars/DemoNavbar.jsx";
 import Sidebar from "components/Sidebar/Sidebar.jsx";
 import { isAuthenticated } from "../services/auth";
@@ -17,7 +16,6 @@ class DashboardUser extends React.Component {
       backgroundColor: "black",
       activeColor: "info"
     };
-    console.log(routesUser)
     this.mainPanel = React.createRef();
   }
   componentDidMount() {

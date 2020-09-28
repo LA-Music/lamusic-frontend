@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import api from '../../services/api'
-import logo from '../../assets/img/logo.png'
+// import logo from '../../assets/img/logo.png'
 
 import {
     Button,
@@ -31,7 +31,7 @@ class ContatoForm extends Component {
           this.setState({ error: "Preencha nome e e-mail e senha para continuar!" });
           } else {
           try {
-              const response = await api.post("/contato", { 
+              await api.post("/contato", { 
                   nome, 
                   email,
                   assunto,
