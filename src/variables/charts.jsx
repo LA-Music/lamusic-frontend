@@ -65,7 +65,7 @@ const dashboard24HoursPerformanceChart = {
     },
 
     tooltips: {
-      enabled: false
+      enabled: true
     },
 
     scales: {
@@ -73,14 +73,17 @@ const dashboard24HoursPerformanceChart = {
         {
           ticks: {
             fontColor: "#9f9f9f",
-            beginAtZero: false,
-            maxTicksLimit: 5
+            beginAtZero: true,
+            // maxTicksLimit: 5
             //padding: 20
+            stepSize:5
           },
           gridLines: {
+            display:true,
             drawBorder: false,
             zeroLineColor: "#ccc",
-            color: "rgba(255,255,255,0.05)"
+            color: "#ccc",
+            
           }
         }
       ],

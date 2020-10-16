@@ -7,7 +7,8 @@ import "react-loader-spinner/dist/loader/css/react-spinner-loader.css"
 import Loader from 'react-loader-spinner'
 
 // react plugin used to create charts
-// import { Line, Pie } from "react-chartjs-2";
+import { Line, Pie } from "react-chartjs-2";
+
 import '../assets/css/Dashboard.css'
 
 // reactstrap components
@@ -28,6 +29,8 @@ import {
   dashboardNASDAQChart
 } from "variables/charts.jsx";
 
+
+
 class Dashboard extends React.Component {
   constructor(props) {
       super(props);
@@ -40,7 +43,8 @@ class Dashboard extends React.Component {
         modalTitle:"",
         activeTab: '1',
         hasMore: true,
-        page:1
+        page:1,
+        timeline_data:{}
       };
       this.toggle = this.toggle.bind(this);
       this.toggleTab = this.toggleTab.bind(this);
@@ -55,6 +59,31 @@ class Dashboard extends React.Component {
           processos:res.data.docs, 
           processos_total:res.data.totalDocs, 
           processos_rev: res.data.docs.filter((obj) => obj.reviewed === true).length
+        })
+    })
+
+    api.get('/credito-retido-list/').then(res=>{             
+        const data = (canvas) => {
+          return {
+            labels: Object.keys(res.data),
+            type: "line",
+            datasets: [
+              {
+                borderColor: "#6bd098",
+                backgroundColor: "#6bd098",
+                pointRadius: 3,
+                pointHoverRadius: 3,
+                borderWidth: 1,
+                data: Object.values(res.data),
+                label: "Crédito Retido",
+                fill:false,
+              }
+            ]
+          };
+        }        
+
+        this.setState({
+          timeline_data:data          
         })
     })
   }
@@ -119,9 +148,9 @@ class Dashboard extends React.Component {
   }
   render() {
     return (
-      <>
-      {/* Aqui */}
+      <>    
       <div className="content">
+      
       <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
          <ModalHeader toggle={this.toggle}>{this.state.modalTitle}</ModalHeader>
          <ModalBody>
@@ -229,6 +258,26 @@ class Dashboard extends React.Component {
 
         <hr />
         <Row>
+            <Col md="12">
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h5">Requisições</CardTitle>
+                  <p className="card-category">Solicitações de Crédito Retido</p>
+                </CardHeader>
+                <CardBody>
+                  <Line
+                    data={this.state.timeline_data}
+                    options={dashboard24HoursPerformanceChart.options}
+                    width={400}
+                    height={100}
+                  />
+                </CardBody>
+                {/*   */}
+              </Card>
+            </Col>
+          </Row>
+        <hr />
+        <Row>
               <Col md="12">
               <Card>
               <CardHeader>
@@ -240,7 +289,7 @@ class Dashboard extends React.Component {
                     next={this.fetchMoreData}
                     hasMore={this.state.hasMore}
                     loader={
-                      <p style={{ textAlign: "center" }}>
+                      <div style={{ textAlign: "center" }}>
 
                     <Loader
                       type="ThreeDots"
@@ -249,7 +298,7 @@ class Dashboard extends React.Component {
                       width={80}
                       timeout={1500} //3 secs
                    />
-                   </p>
+                   </div>
                   }
                     height={500}
                     endMessage={
