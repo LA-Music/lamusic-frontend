@@ -19,10 +19,10 @@ body{
   overflow:auto;
 }
 
-.processosTable{
+/* .processosTable{
   height: 65vh;
   overflow: auto;
-}
+} */
 .nav-tabs .nav-item {
   cursor: pointer;
 }

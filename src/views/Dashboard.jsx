@@ -10,7 +10,7 @@ import Loader from 'react-loader-spinner'
 import { Line, Pie } from "react-chartjs-2";
 
 import '../assets/css/Dashboard.css'
-
+import Checkbox from '../components/Checkbox'
 // reactstrap components
 import {
   Card,
@@ -19,8 +19,25 @@ import {
   CardFooter,
   CardTitle,
   Row,
-  Table,Button,
-  Col,Modal, ModalHeader, ModalBody, ModalFooter, Input, TabContent, TabPane, Nav, NavItem, NavLink,CardText
+  Table,
+  Button,
+  Col, 
+  Modal, 
+  ModalHeader, 
+  ModalBody, 
+  ModalFooter, 
+  Input, 
+  TabContent, 
+  TabPane, 
+  Nav, 
+  NavItem,
+  NavLink,
+  CardText,
+  FormGroup,
+  Label,
+  InputGroup,
+  InputGroupText,
+  InputGroupAddon,
 } from "reactstrap";
 // core components
 import {
@@ -28,6 +45,7 @@ import {
   dashboardEmailStatisticsChart,
   dashboardNASDAQChart
 } from "variables/charts.jsx";
+import { id } from "chartjs-plugin-annotation";
 
 
 
@@ -44,7 +62,10 @@ class Dashboard extends React.Component {
         activeTab: '1',
         hasMore: true,
         page:1,
-        timeline_data:{}
+        timeline_data:{},
+        selected:"Realizar",
+        intems:[],
+        checkedItems: new Map(),
       };
       this.toggle = this.toggle.bind(this);
       this.toggleTab = this.toggleTab.bind(this);
@@ -76,7 +97,7 @@ class Dashboard extends React.Component {
                 borderWidth: 1,
                 data: Object.values(res.data),
                 label: "Crédito Retido",
-                fill:false,
+                fill:false,                
               }
             ]
           };
@@ -125,6 +146,8 @@ class Dashboard extends React.Component {
     }) 
   }, 1500); 
   };
+
+
   async checkProcesso(processo_id, reviewed){
     const check = reviewed ? false : true
     const revisados = this.state.processos_rev 
@@ -146,6 +169,46 @@ class Dashboard extends React.Component {
       alert("Erro"+err)
     }
   }
+
+  handleAction = async e => {
+    e.preventDefault();
+    if(this.state.selected === "Realizar"){
+      const ids = this.state.checkedItems.keys()
+        for (const item of ids) {
+          alert(`Ativando Bot para: ${item}`)
+          try { 
+            await api.post("/updatePuppet/", {
+              "processo_id":item
+            });
+          } catch (error) {
+            alert(error)
+          }
+         alert(`${item} Atualizado com Sucesso`)
+        }
+    }else if(this.state.selected === "Pronto"){
+      const ids = this.state.checkedItems.keys()
+      for (const item of ids) {
+        await api.post("/checkProcesso", {
+          "processo_id":item,
+          "check_value":true
+        });
+      }
+    }
+    window.location.reload()
+  }
+  
+  handleSelect = async e => {
+    this.setState({
+      selected:e.target.value
+    })
+  }
+
+  handleChange = e => {
+    const item = e.target.name;
+    const isChecked = e.target.checked;
+    this.setState(prevState => ({ checkedItems: prevState.checkedItems.set(item, isChecked) }));
+  }
+
   render() {
     return (
       <>    
@@ -220,6 +283,28 @@ class Dashboard extends React.Component {
            <Button color='primary' onClick={this.toggle}>Ok</Button>
          </ModalFooter>
        </Modal>
+
+       <Row>
+            <Col md="12">
+              <Card>
+                <CardHeader>
+                  <CardTitle tag="h5">Requisições</CardTitle>
+                  <p className="card-category">Solicitações de Crédito Retido</p>
+                </CardHeader>
+                <CardBody>
+                  <Line
+                    data={this.state.timeline_data}
+                    options={dashboard24HoursPerformanceChart.options}
+                    width={400}
+                    height={100}
+                  />
+                </CardBody>
+                {/*   */}
+              </Card>
+            </Col>
+          </Row>
+          <hr />
+
        <Row>
             <Col lg="3" md="6" sm="6">
               <Card className="card-stats">
@@ -254,37 +339,51 @@ class Dashboard extends React.Component {
                 </CardFooter>
               </Card>
             </Col>
-          </Row>
-
-        <hr />
-        <Row>
-            <Col md="12">
-              <Card>
-                <CardHeader>
-                  <CardTitle tag="h5">Requisições</CardTitle>
-                  <p className="card-category">Solicitações de Crédito Retido</p>
-                </CardHeader>
-                <CardBody>
-                  <Line
-                    data={this.state.timeline_data}
-                    options={dashboard24HoursPerformanceChart.options}
-                    width={400}
-                    height={100}
-                  />
-                </CardBody>
-                {/*   */}
-              </Card>
+            <Col>
+            <Card className="card-stats">
+            <CardBody>
+                  <InputGroup className="no-border">
+                  <Input placeholder="Procurar..." />
+                  <InputGroupAddon addonType="append">
+                    <InputGroupText>
+                      <i className="nc-icon nc-zoom-split" />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                </InputGroup>
+              </CardBody>
+            </Card>            
+            <Card>
+              <CardBody>
+                <FormGroup>
+                  <Label for="SelectAcao">Ação</Label>
+                  <Input type="select" name="select" id="SelectAcao" onChange={this.handleSelect} defaultValue="Realizar">
+                    <option value="Realizar">Realizar Consulta</option>
+                    <option value="Pronto">Marcar Como Pronto</option>
+                  </Input>
+                  <Button
+                    className="btn-round"
+                    color="warning"
+                    type="submit"
+                    onClick={this.handleAction}
+                    >
+                    Enviar
+                    </Button>
+                </FormGroup>
+              </CardBody>
+            </Card>
             </Col>
-          </Row>
+          </Row>        
         <hr />
         <Row>
+         
+              
               <Col md="12">
-              <Card>
-              <CardHeader>
-                  <CardTitle tag="h4">Processos</CardTitle>
-              </CardHeader>
-              <CardBody className="processosTable">
-              <InfiniteScroll
+                <Card>
+                <CardHeader>
+                    <CardTitle tag="h4">Processos</CardTitle>
+                </CardHeader>
+                <CardBody className="processosTable">
+                <InfiniteScroll
                     dataLength={this.state.processos.length}
                     next={this.fetchMoreData}
                     hasMore={this.state.hasMore}
@@ -323,18 +422,17 @@ class Dashboard extends React.Component {
                       </tr>
                   </thead>
                   <tbody>
-                  
                    {
                       this.state.processos.map((processo,index) =>
                           <tr key={processo._id}>
-                            <td>{index+1}</td>
-                              <td>
-                                <Input 
-                                  type="checkbox" 
-                                  style={{position:"inherit",marginLeft:"0px"}} 
-                                  onChange={this.checkProcesso.bind(this, processo._id, processo.reviewed)}
-                                  defaultChecked={processo.reviewed?true:false}
-                                  />{' '}</td>
+                            <td>
+                            <Checkbox name={processo._id} checked={this.state.checkedItems.get(processo._id)} onChange={this.handleChange} />
+                            </td>
+                              <td style={{textAlign:"center"}}>
+                                {
+                                  processo.reviewed?<i className="fa fa-check" aria-hidden="true"></i>:<i className="fa fa-times" aria-hidden="true"></i>
+                                }
+                              </td>
                               <td>{processo.createdAt}</td>
                               <td>{processo.nome}</td>
                               <td>{processo.email}</td>
@@ -345,7 +443,6 @@ class Dashboard extends React.Component {
                           </tr>
                           )
                       }
-                      
                   </tbody>
                   </Table>
                   </InfiniteScroll>
