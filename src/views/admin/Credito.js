@@ -54,6 +54,13 @@ class listCredito extends Component{
          <ModalBody>
                 <h3><b>Nome: </b>{this.state.credito.nome}</h3>
                 <hr></hr>
+                <h3><b>Nomes Artísticos: </b></h3>  
+                {
+                this.state.credito.pseudonimos?this.state.credito.pseudonimos.map((pseudonimo) =>
+                    <li key={pseudonimo}>{pseudonimo}</li>
+                ):"---"
+                }
+                <hr></hr>
                 <h3><b>Redes Sociais: </b></h3>  
                 {
                 this.state.credito.redes_sociais?this.state.credito.redes_sociais.map((rede) =>
