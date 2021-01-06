@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "apexcharts": "^3.20.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bootstrap": "4.3.1",
     "chart.js": "2.8.0",
     "chartjs-plugin-annotation": "^0.5.7",
