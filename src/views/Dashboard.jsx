@@ -74,7 +74,6 @@ class Dashboard extends React.Component {
   componentDidMount(){
     api.get('/processo-list/'+this.page).then(res=>{
       console.log(this.state.page)
-      
         this.setState({
           page: this.state.page+1,
           processos:res.data.docs, 
@@ -83,10 +82,11 @@ class Dashboard extends React.Component {
         })
     })
 
-    api.get('/credito-retido-list/').then(res=>{             
+    api.get('/credito-retido-list/').then(res=>{ 
+      console.log(Object.values(res.data))            
         const data = (canvas) => {
           return {
-            labels: Object.keys(res.data),
+            labels: Object.keys(res.data).reverse(),
             type: "line",
             datasets: [
               {
@@ -95,7 +95,7 @@ class Dashboard extends React.Component {
                 pointRadius: 3,
                 pointHoverRadius: 3,
                 borderWidth: 1,
-                data: Object.values(res.data),
+                data: Object.values(res.data).reverse(),
                 label: "Crédito Retido",
                 fill:false,                
               }
@@ -356,9 +356,19 @@ class Dashboard extends React.Component {
               <CardBody>
                 <FormGroup>
                   <Label for="SelectAcao">Ação</Label>
-                  <Input type="select" name="select" id="SelectAcao" onChange={this.handleSelect} defaultValue="Realizar">
+                  {/* <Input type="select" name="select" id="SelectAcao" onChange={this.handleSelect} defaultValue="Realizar">
                     <option value="Realizar">Realizar Consulta</option>
                     <option value="Pronto">Marcar Como Pronto</option>
+                  </Input> */}
+                  <Input type="select" name="select" id="SelectAcao" onChange={this.handleSelect} defaultValue="Pesquisa">
+                    <option value="Pesquisa">Em pesquisa</option>
+                    <option value="Realizar">Relatório enviado - lead</option>
+                    <option value="Realizar">Em negociação</option>
+                    <option value="Realizar">Contrato enviado</option>
+                    <option value="Realizar">Contrato assinado</option>
+                    <option value="Realizar">Retido em liberação</option>
+                    <option value="Realizar">Retido resgatado</option>
+                    
                   </Input>
                   <Button
                     className="btn-round"
@@ -411,7 +421,7 @@ class Dashboard extends React.Component {
                   <thead>
                       <tr>
                       <th>#</th>
-                      <th>Pronto</th>
+                      <th>Status</th>
                       <th>Data</th>
                       <th>Nome</th>
                       <th>Email</th>
