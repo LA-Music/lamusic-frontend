@@ -3,6 +3,7 @@ import Credito from "views/admin/Credito"
 import Marca from "views/admin/Marca"
 import Musica from "views/admin/Musica"
 import Contato from "views/admin/Contato"
+import Perfil from "views/admin/Perfis"
 import UserPage from "views/User.jsx";
 
 import Solicitacao from "views/user/Solicitacoes"
@@ -18,6 +19,13 @@ var routes = [
     name: "Home",
     icon: "nc-icon nc-chart-bar-32",
     component: Dashboard,
+    layout: "/admin"
+  },
+  {
+    path: "/user-page",
+    name: "Contas",
+    icon: "nc-icon nc-single-02",
+    component: Perfil,
     layout: "/admin"
   },
   {
@@ -46,13 +54,6 @@ var routes = [
     name: "Contatos",
     icon: "nc-icon nc-chat-33",
     component: Contato,
-    layout: "/admin"
-  },
-  {
-    path: "/user-page",
-    name: "Perfil",
-    icon: "nc-icon nc-single-02",
-    component: UserPage,
     layout: "/admin"
   }
 ];
