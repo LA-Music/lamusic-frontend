@@ -4,6 +4,7 @@ import Marca from "views/admin/Marca"
 import Musica from "views/admin/Musica"
 import Contato from "views/admin/Contato"
 import Perfil from "views/admin/Perfis"
+import Notificacao from "views/admin/Emails"
 import UserPage from "views/User.jsx";
 
 import Solicitacao from "views/user/Solicitacoes"
@@ -22,6 +23,13 @@ var routes = [
     layout: "/admin"
   },
   {
+    path: "/notificacoes",
+    name: "Notificações",
+    icon: "nc-icon nc-send",
+    component: Notificacao,
+    layout: "/admin"
+  },
+  {
     path: "/user-page",
     name: "Contas",
     icon: "nc-icon nc-single-02",
@@ -35,20 +43,20 @@ var routes = [
     component: Credito,
     layout: "/admin"
   },
-  {
-    path: "/marca",
-    name: "Marcas",
-    icon: "nc-icon nc-money-coins",
-    component: Marca,
-    layout: "/admin"
-  },
-  {
-    path: "/musica",
-    name: "Musicas",
-    icon: "nc-icon nc-note-03",
-    component: Musica,
-    layout: "/admin"
-  },
+  // {
+  //   path: "/marca",
+  //   name: "Marcas",
+  //   icon: "nc-icon nc-money-coins",
+  //   component: Marca,
+  //   layout: "/admin"
+  // },
+  // {
+  //   path: "/musica",
+  //   name: "Musicas",
+  //   icon: "nc-icon nc-note-03",
+  //   component: Musica,
+  //   layout: "/admin"
+  // },
   {
     path: "/contato",
     name: "Contatos",
