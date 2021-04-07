@@ -9,6 +9,7 @@ import {
     CardTitle,
     } from 'reactstrap'
 import api from '../../services/api'
+import { CSVLink, CSVDownload } from "react-csv";
 
 import { withRouter } from "react-router-dom";
 import '../../assets/css/Credito.css'
@@ -18,6 +19,7 @@ class listNotificacao extends Component{
         super(props);
         this.state = {
             notificacoes:[],
+            emails:[],
             page:1
         }
     }
@@ -28,11 +30,32 @@ class listNotificacao extends Component{
                 notificacoes:res.data.docs, 
               })
           })
+        
+        api.get('/listEmails/').then(res=>{
+            this.setState({
+                emails: res.data.records,
+            })
+        })
     }
     render(){
       return(
         
         <div className="content">
+            <Row>
+            <Col lg="3" md="6" sm="6">
+              <Card className="card-stats">
+                <CardBody>
+                    <h3>Gerar Lista de Emails</h3>
+                  <CSVLink 
+                      data={this.state.emails} 
+                      filename={"Emails.csv"}
+                      className="btn btn-primary"
+                      separator={";"}
+                      > Lista de Emails </CSVLink>
+                </CardBody>
+              </Card>
+            </Col>
+            </Row>
             <Row>  
                 <Col md="12">
                 <Card>
